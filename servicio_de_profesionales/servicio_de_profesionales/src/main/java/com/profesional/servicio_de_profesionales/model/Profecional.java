@@ -1,9 +1,16 @@
 package com.profesional.servicio_de_profesionales.model;
 
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import jakarta.persistence.*;
 
 @Data
 @NoArgsConstructor
@@ -11,13 +18,13 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "profecional")
 public class Profecional {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String pnombre;
+    private String nombre;
 
     @Column(nullable = false)
     private String apellidopa;
@@ -28,13 +35,9 @@ public class Profecional {
     @Column(nullable = false, length = 13)
     private String run;
 
-    //Es lo que estudio
     @Column(nullable = false)
     private String titulo;
 
     @Column(nullable = false)
-    private int anio_experiencia;
-
-    //Datos que aun no se como se implementan: usuarioId, especialidadId
-    
+    private LocalDate fechacontrato;
 }

@@ -1,5 +1,8 @@
 package com.profesional.servicio_de_profesionales.dto;
 
+
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ProfecionalRequestDTO {
 
     @NotBlank(message = "El nombre no puede estar vacio")
-    private String pnombre;
+    private String nombre;
 
     @NotBlank(message = "El apellido paterno no puede estar vacio")
     private String apellidopa;
@@ -28,5 +31,5 @@ public class ProfecionalRequestDTO {
     private String titulo;
 
     @NotNull(message = "Los años de experiencia no puede estar vacio")
-    private int anio_experiencia;
+    private LocalDate fechacontrato;
 }
