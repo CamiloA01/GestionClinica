@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProfecionalResponceDTO {
+public class ProfesionalResponceDTO {
     private Long id;
     private String nombre;
     private String apellidopa;

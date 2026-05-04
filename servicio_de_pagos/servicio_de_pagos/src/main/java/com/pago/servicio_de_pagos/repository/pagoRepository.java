@@ -1,5 +1,8 @@
 package com.pago.servicio_de_pagos.repository;
 
-public class pagoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.pago.servicio_de_pagos.model.Pago;
+
+public interface PagoRepository extends JpaRepository<Pago, Long> {
 
 }

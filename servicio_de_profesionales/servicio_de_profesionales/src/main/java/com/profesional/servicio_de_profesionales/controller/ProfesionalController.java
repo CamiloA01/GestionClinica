@@ -1,7 +1,7 @@
 package com.profesional.servicio_de_profesionales.controller;
 
 import com.profesional.servicio_de_profesionales.dto.*;
-import com.profesional.servicio_de_profesionales.service.ProfecionalService;
+import com.profesional.servicio_de_profesionales.service.ProfesionalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +13,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/profecional")
 @RequiredArgsConstructor
-public class ProfecionalController {
+public class ProfesionalController {
 
-    private final ProfecionalService profecionalService;
+    private final ProfesionalService profecionalService;
 
     @GetMapping
-    public ResponseEntity<List<ProfecionalResponceDTO>> obtenerTodos() {
+    public ResponseEntity<List<ProfesionalResponceDTO>> obtenerTodos() {
         return ResponseEntity.ok(profecionalService.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfecionalResponceDTO> actualizar(
+    public ResponseEntity<ProfesionalResponceDTO> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody ProfecionalRequestDTO dto) {
+            @Valid @RequestBody ProfesionalRequestDTO dto) {
         return profecionalService.actualizar(id, dto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

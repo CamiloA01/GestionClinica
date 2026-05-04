@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfecionalRequestDTO {
+public class ProfesionalRequestDTO {
 
     @NotBlank(message = "El nombre no puede estar vacio")
     private String nombre;

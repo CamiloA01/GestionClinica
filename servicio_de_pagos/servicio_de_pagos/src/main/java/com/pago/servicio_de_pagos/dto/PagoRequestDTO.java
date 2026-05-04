@@ -29,4 +29,6 @@ public class PagoRequestDTO {
     @PastOrPresent(message = "la fecha de pago no puede ser futura")
     private LocalDate fechaPago;
 
+    
+
 }
