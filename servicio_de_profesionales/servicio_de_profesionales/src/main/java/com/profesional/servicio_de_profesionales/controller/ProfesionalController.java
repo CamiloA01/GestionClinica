@@ -15,22 +15,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfesionalController {
 
-    private final ProfesionalService profecionalService;
+    private final ProfesionalService profesionalService;
 
     @GetMapping
     public ResponseEntity<List<ProfesionalResponceDTO>> obtenerTodos() {
-        return ResponseEntity.ok(profecionalService.obtenerTodos());
+        return ResponseEntity.ok(profesionalService.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfesionalResponceDTO> actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody ProfesionalRequestDTO dto) {
-        return profecionalService.actualizar(id, dto)
+    public ResponseEntity<ProfesionalResponceDTO> obtenerPorId(@PathVariable Long id) {
+        return profesionalService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    
+    @PostMapping
+    public ResponseEntity<ProfesionalResponceDTO> crear(
+            @Valid @RequestBody ProfesionalRequestDTO dto) {
+        return ResponseEntity.status(201).body(profesionalService.guardar(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfesionalResponceDTO> actualizar (
+            @PathVariable Long id,
+            @Valid @RequestBody ProfesionalRequestDTO dto) {
+        return profesionalService.actualizar(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (profesionalService.obtenerPorId(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        profesionalService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
     
 }

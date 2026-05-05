@@ -32,7 +32,7 @@ public class Profesional {
     @Column(nullable = false)
     private String apellidoma;
 
-    @Column(nullable = false, length = 13)
+    @Column(nullable = false,unique = true, length = 13)
     private String run;
 
     @Column(nullable = false)
@@ -40,4 +40,6 @@ public class Profesional {
 
     @Column(nullable = false)
     private LocalDate fechacontrato;
+
+    
 }
