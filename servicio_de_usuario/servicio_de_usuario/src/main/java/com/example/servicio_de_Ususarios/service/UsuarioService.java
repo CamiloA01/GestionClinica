@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,25 +26,28 @@ public class UsuarioService {
                 usuario.getEstado()
         );
     }
-
-    public UsuarioRequestDTO createUsuario(UsuarioRequestDTO requestDTO) {
-        Usuario usuario = new Usuario();
-        usuario.setUsername(requestDTO.getUsername());
-        usuario.setGmail(requestDTO.getGmail());
-        usuario.setPassword(requestDTO.getPassword());
-        usuario.setRoll(requestDTO.getRoll());
-        usuario.setEstado(requestDTO.getEstado());
-
-        Usuario savedUsuario = usuarioRepository.save(usuario);
-        return mapToDTO(savedUsuario);
-    }
-
+    
     public List<UsuarioResponseDTO> getAllUsuarios() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        return usuarios.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return usuarioRepository.findAll()
+            .stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
     }
+
+    public UsuarioResponseDTO createUsuario(UsuarioRequestDTO requestDTO) {
+        Usuario usuario = new Usuario(
+            null,
+            requestDTO.getUsername(),
+            requestDTO.getGmail(),
+            requestDTO.getPassword(),
+            requestDTO.getRoll(),
+            requestDTO.getEstado()
+
+        );
+        return mapToDTO(usuarioRepository.save(usuario));
+    }
+
+   
 
 
 }

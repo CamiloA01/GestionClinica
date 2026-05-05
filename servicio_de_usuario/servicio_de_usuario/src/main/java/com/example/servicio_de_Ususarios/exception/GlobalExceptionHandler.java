@@ -2,7 +2,7 @@ package com.example.servicio_de_Ususarios.exception;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;

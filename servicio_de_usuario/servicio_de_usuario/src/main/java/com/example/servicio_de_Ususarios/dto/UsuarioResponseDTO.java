@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioRespnseDTO {
+public class UsuarioResponseDTO {
     
     private Long id;
     private String username;
