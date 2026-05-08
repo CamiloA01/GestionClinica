@@ -5,15 +5,15 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import com.pago.servicio_de_pagos.model.Pago;
-import com.pago.servicio_de_pagos.repository.PagoRepository;
+import com.pago.servicio_de_pagos.repository.pagoRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("all")
-public class PagoService {
+public class pagoService {
 
-    private final PagoRepository pagoRepository;
+    private final pagoRepository pagoRepository;
     
     public List<Pago> obtenerPagos() {
         return pagoRepository.findAll();
@@ -40,5 +40,10 @@ public class PagoService {
 
     public void eliminarPago(Long pagoId) {
         pagoRepository.deleteById(pagoId);
+    }
+
+    // Método para obtener pagos filtrados por su estado
+    public List<Pago> obtenerPagosPorEstado(String estado) {
+        return pagoRepository.findByEstadoPago(estado);
     }
 }
