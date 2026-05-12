@@ -47,14 +47,16 @@ public class UsuarioService {
         return mapToDTO(usuarioRepository.save(usuario));
     }
 
+    public void eliminarUsuario(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+    
     public Optional<UsuarioResponseDTO> getUsuarioById(Long id) {
         return usuarioRepository.findById(id)
             .map(this::mapToDTO);
     }
 
-    public void eliminarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
-    }
+    
 
     public Optional<UsuarioResponseDTO> actualizarUsuario(Long id, UsuarioRequestDTO requestDTO) {
         return usuarioRepository.findById(id)
