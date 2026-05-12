@@ -1,6 +1,6 @@
 package com.pago.servicio_de_pagos.controller;
 
-import com.pago.servicio_de_pagos.service.PagoService;
+import com.pago.servicio_de_pagos.service.pagoService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pagos")
 @RequiredArgsConstructor
-public class PagoController {
+public class pagoController {
 
-    private final PagoService pagoService;
+    private final pagoService pagoService;
 
     @GetMapping
     public ResponseEntity<List<Pago>> obtenerPagos() {
@@ -55,6 +55,7 @@ public class PagoController {
         return ResponseEntity.noContent().build();
     }
 
+
     //consulta personalizada para obtener pagos por estado
     @GetMapping("/buscar")
     public ResponseEntity<List<Pago>> obtenerPagosPorEstado(@RequestParam String estado) {
@@ -64,4 +65,16 @@ public class PagoController {
     }
     return ResponseEntity.ok(pagos); // Devuelve 200 con la lista de pagos encontrados
 }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Pago>> buscarPorEstado(@RequestParam String estado) {
+    List<Pago> pagos = pagoService.obtenerPagosPorEstado(estado);
+    
+    if (pagos.isEmpty()) {
+        return ResponseEntity.noContent().build(); // Devuelve 204 si no hay resultados
+    }
+    
+    return ResponseEntity.ok(pagos); // Devuelve 200 con la lista de pagos
+    }
+
 }
