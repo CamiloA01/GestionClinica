@@ -35,6 +35,4 @@ public class Pago {
 
     @Column(nullable = false)
     private LocalDate fechaPago;
-
-
 }

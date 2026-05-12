@@ -41,4 +41,8 @@ public class PagoService {
     public void eliminarPago(Long pagoId) {
         pagoRepository.deleteById(pagoId);
     }
+
+    public List<Pago> obtenerPagosPorEstado(String estado) {
+        return pagoRepository.findByEstadoPago(estado);
+    }
 }

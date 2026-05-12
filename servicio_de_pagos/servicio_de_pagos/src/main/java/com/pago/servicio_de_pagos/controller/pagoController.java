@@ -54,4 +54,14 @@ public class PagoController {
         pagoService.eliminarPago(id);
         return ResponseEntity.noContent().build();
     }
+
+    //consulta personalizada para obtener pagos por estado
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Pago>> obtenerPagosPorEstado(@RequestParam String estado) {
+    List<Pago> pagos = pagoService.obtenerPagosPorEstado(estado);
+    if (pagos.isEmpty()) {
+        return ResponseEntity.noContent().build(); // Devuelve 204 si no hay nada
+    }
+    return ResponseEntity.ok(pagos); // Devuelve 200 con la lista de pagos encontrados
+}
 }
