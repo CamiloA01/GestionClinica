@@ -1,11 +1,20 @@
 package com.notificacion.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
 
 import com.notificacion.model.Notificacion;
 import com.notificacion.model.dto.NotificacionResponseDTO;
-import com.notificacion.model.dto.notificacionRequestDTO;
+import com.notificacion.model.dto.NotificacionRequestDTO;
+import com.notificacion.repository.NotificacionRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class NotificacionService {
 
     private final NotificacionRepository notificacionRepository;
@@ -27,17 +36,61 @@ public class NotificacionService {
     //OBTENER TODAS LAS NOTIFICAIONES
     public List<NotificacionResponseDTO> obtenerTodas(){
         return notificacionRepository.findAll()
-        .stream().map(this::mapToDTO).collect(collectors.toList());
+        .stream()
+        .map(this::mapToDTO)
+        .collect(Collectors.toList());
     }
 
     //OBTENER POR ID
-    public Optional<NotificacionResponseDTO> obtenerPorId(Long id){
-        return notificacionRepository.findById(id).map(this::mapToDTO);
+    public NotificacionResponseDTO obtenerPorId(Long id){
+    Notificacion noti = notificacionRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
+
+    return mapToDTO(noti);
+    }
+
+    //OBTENER POR USUARIO
+    public List<NotificacionResponseDTO> obtenerPorUsuarioId(Long usuarioId){
+        return notificacionRepository.findByIdUsuario(usuarioId)
+        .stream()
+        .map(this::mapToDTO)
+        .collect(Collectors.toList());
     }
 
     //GUARDAR NOTIFICACIÓN
-    public NotificacionResponseDTO guardar (notificacionRequestDTO dto){
-        Notificacion notificacion = notificacionRepository.findById(dto.)
+    public NotificacionResponseDTO guardar (NotificacionRequestDTO dto){
+        Notificacion notificacion = new Notificacion();
+
+        notificacion.setIdUsuario(dto.getUsuarioId());
+        notificacion.setTitulo(dto.getTitulo());
+        notificacion.setMensaje(dto.getMensaje());
+        notificacion.setTipo(dto.getTipo());
+
+        // Por defecto, el estado de la notificación se establece como "Enviado"
+        notificacion.setEstado("ENVIADA");
+        notificacion.setFechaEnvio(LocalDateTime.now());
+
+
+        notificacion = notificacionRepository.save(notificacion);
+        return mapToDTO(notificacion);
+    }
+
+    //ELIMINAR NOTIFICACIÓN
+    public void eliminar(Long id){
+        if(!notificacionRepository.existsById(id)){
+        throw new RuntimeException("Notificación no existe");
+        }
+        notificacionRepository.deleteById(id);
+    }
+
+    //MARCAR COMO LEÍDA
+    public NotificacionResponseDTO marcarComoLeida(Long id){
+        Notificacion noti = notificacionRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Notificación no encontrada"));
+
+        noti.setEstado("LEIDA");
+        noti.setFechaLectura(LocalDateTime.now());
+        return mapToDTO(notificacionRepository.save(noti));
     }
 
 }

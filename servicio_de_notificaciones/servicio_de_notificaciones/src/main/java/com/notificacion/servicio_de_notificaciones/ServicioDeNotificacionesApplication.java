@@ -2,8 +2,15 @@ package com.notificacion.servicio_de_notificaciones;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
 
 @SpringBootApplication
+@EntityScan("com.notificacion.model")
+@EnableJpaRepositories("com.notificacion.repository")
+@ComponentScan("com.notificacion")
 public class ServicioDeNotificacionesApplication {
 
 	public static void main(String[] args) {

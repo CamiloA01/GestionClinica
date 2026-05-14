@@ -6,6 +6,6 @@ import com.notificacion.model.Notificacion;
 
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
 
-    List<Notificacion> findByEstadoNotificacion(String estado);
+    List<Notificacion> findByIdUsuario(Long idUsuario);
 
 }
