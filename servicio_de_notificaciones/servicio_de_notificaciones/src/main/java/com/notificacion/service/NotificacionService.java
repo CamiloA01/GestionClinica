@@ -76,10 +76,13 @@ public class NotificacionService {
     }
 
     //ELIMINAR NOTIFICACIÓN
-    public void eliminar(Long id){
-        if(!notificacionRepository.existsById(id)){
-        throw new RuntimeException("Notificación no existe");
+    public void eliminar(Long id) {
+        // 1. Verificamos si existe antes de hacer nada
+        if (!notificacionRepository.existsById(id)) {
+            // 2. Si no existe, lanzamos la excepción que tu GlobalExceptionHandler ya sabe leer
+            throw new RuntimeException("No se encontró la notificación con ID: " + id);
         }
+        // 3. Si existe, procedemos a borrar
         notificacionRepository.deleteById(id);
     }
 
