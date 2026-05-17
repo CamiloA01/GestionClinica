@@ -16,7 +16,7 @@ public class PacienteResponseDTO {
     private String nombre;
     private String apellido;
     private String rut;
-    private LocalDate fecha_nacimineto;
+    private LocalDate fecha_nacimiento;
     private int telefono;
     private String direccion;
 

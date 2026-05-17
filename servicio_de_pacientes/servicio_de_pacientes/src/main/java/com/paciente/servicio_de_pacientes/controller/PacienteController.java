@@ -22,10 +22,7 @@ public class PacienteController {
         return ResponseEntity.status(201).body(pacienteServices.crearPaciente(requestDTO));
     }
 
-    @PostMapping 
-    public PacienteResponseDTO crearPaciente(@RequestBody PacienteRequestDTO requestDTO) {
-        return pacienteServices.crearPaciente(requestDTO);
-    }
+    
     
     @GetMapping
     public ResponseEntity<?> getAllUsuarios() {
