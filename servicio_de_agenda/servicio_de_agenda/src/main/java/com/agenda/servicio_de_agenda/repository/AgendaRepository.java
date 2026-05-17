@@ -6,6 +6,7 @@ import com.agenda.servicio_de_agenda.model.Agenda;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Long> {
 
-    List<Agenda> findByDuracionCita(Integer duracionCita);
+    // Para ver todas las agendas de un médico específico
+    List<Agenda> findByIdProfesional(Long idProfesional);
 
 }
