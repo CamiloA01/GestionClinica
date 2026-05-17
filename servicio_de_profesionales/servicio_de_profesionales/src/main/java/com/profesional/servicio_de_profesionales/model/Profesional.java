@@ -23,6 +23,9 @@ public class Profesional {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "usuario_id", nullable = false)
+    private Long usuarioId;
+
     @Column(nullable = false)
     private String nombre;
 
@@ -41,5 +44,4 @@ public class Profesional {
     @Column(nullable = false)
     private LocalDate fechacontrato;
 
-    
 }

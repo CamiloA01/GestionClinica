@@ -10,26 +10,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProfesionalRequestDTO {
 
-    @NotBlank(message = "El nombre no puede estar vacio")
+    @NotNull(message = "El usuarioId es obligatorio")
+    private Long usuarioId;
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @NotBlank(message = "El apellido paterno no puede estar vacio")
+    @NotBlank(message = "El apellido paterno es obligatorio")
     private String apellidopa;
 
-    @NotBlank(message = "El apellido materno no puede estar vacio")
+    @NotBlank(message = "El apellido materno es obligatorio")
     private String apellidoma;
 
-    @NotBlank(message = "El run no puede estar vacio")
+    @NotBlank(message = "El RUN es obligatorio")
     private String run;
 
-    //Es lo que estudio
-    @NotBlank(message = "El titulo no puede estar vacio")
+    @NotBlank(message = "El título es obligatorio")
     private String titulo;
 
-    @NotNull(message = "Los años de experiencia no puede estar vacio")
+    @NotNull(message = "La fecha de contrato es obligatoria")
     private LocalDate fechacontrato;
 }
+

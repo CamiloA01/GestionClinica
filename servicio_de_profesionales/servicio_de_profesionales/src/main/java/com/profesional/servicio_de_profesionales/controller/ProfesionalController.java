@@ -11,32 +11,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/profecional")
+@RequestMapping("/api/profesional")
 @RequiredArgsConstructor
 public class ProfesionalController {
 
     private final ProfesionalService profesionalService;
 
     @GetMapping
-    public ResponseEntity<List<ProfesionalResponceDTO>> obtenerTodos() {
+    public ResponseEntity<List<ProfesionalResponseDTO>> obtenerTodos() {
         return ResponseEntity.ok(profesionalService.obtenerTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfesionalResponceDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ProfesionalResponseDTO> obtenerPorId(@PathVariable Long id) {
         return profesionalService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<ProfesionalResponceDTO> crear(
+    public ResponseEntity<ProfesionalResponseDTO> crear(
             @Valid @RequestBody ProfesionalRequestDTO dto) {
         return ResponseEntity.status(201).body(profesionalService.guardar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProfesionalResponceDTO> actualizar (
+    public ResponseEntity<ProfesionalResponseDTO> actualizar (
             @PathVariable Long id,
             @Valid @RequestBody ProfesionalRequestDTO dto) {
         return profesionalService.actualizar(id, dto)
