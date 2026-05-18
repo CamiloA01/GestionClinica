@@ -5,9 +5,14 @@ import com.example.servicio_de_Ususarios.service.*;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/usuarios")    
@@ -16,11 +21,12 @@ public class usuarioController {
 
     private final UsuarioService usuarioService;
 
-    @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> createUsuario(@Valid @RequestBody UsuarioRequestDTO requestDTO) {
-        return ResponseEntity.status(201).body(usuarioService.createUsuario(requestDTO));
+    @PostMapping("/registrar")
+    public ResponseEntity<UsuarioResponseDTO> registrarUsuario(@RequestBody UsuarioRequestDTO request){
+        UsuarioResponseDTO response = usuarioService.registrar(request);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
-
+    
     @GetMapping
     public ResponseEntity<?> getAllUsuarios() {
         return ResponseEntity.ok(usuarioService.getAllUsuarios());

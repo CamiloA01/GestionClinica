@@ -12,11 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "profesional")
+@Table(name = "especialidad")
 public class Especialidad {
 
     @Id
@@ -32,9 +33,9 @@ public class Especialidad {
     @Column(nullable = false)
     private String estado;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime fechaCreacion;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime fechaActualizacion;
 }

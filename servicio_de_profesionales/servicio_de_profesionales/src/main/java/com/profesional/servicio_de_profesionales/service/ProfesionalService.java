@@ -55,17 +55,17 @@ public class ProfesionalService {
     }
 
     public Optional<ProfesionalResponseDTO> actualizar(Long id, ProfesionalRequestDTO dto) {
-    return profesionalRepository.findById(id).map(existente -> {
-        existente.setUsuarioId(dto.getUsuarioId());
-        existente.setNombre(dto.getNombre());
-        existente.setApellidopa(dto.getApellidopa());
-        existente.setApellidoma(dto.getApellidoma());
-        existente.setRun(dto.getRun());
-        existente.setTitulo(dto.getTitulo());
-        existente.setFechacontrato(dto.getFechacontrato());
-        return mapToDTO(profesionalRepository.save(existente));
-    });
-}
+        return profesionalRepository.findById(id).map(existente -> {
+            existente.setUsuarioId(dto.getUsuarioId());
+            existente.setNombre(dto.getNombre());
+            existente.setApellidopa(dto.getApellidopa());
+            existente.setApellidoma(dto.getApellidoma());
+            existente.setRun(dto.getRun());
+            existente.setTitulo(dto.getTitulo());
+            existente.setFechacontrato(dto.getFechacontrato());
+            return mapToDTO(profesionalRepository.save(existente));
+        });
+    }
 
     public void eliminar(Long id) {
         profesionalRepository.deleteById(id);

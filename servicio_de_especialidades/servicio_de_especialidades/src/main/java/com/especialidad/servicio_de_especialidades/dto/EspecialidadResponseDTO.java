@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EspecialidadResponceDTO {
+public class EspecialidadResponseDTO {
     
     private Long id;
     private String nombre;
