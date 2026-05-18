@@ -55,6 +55,15 @@ public class NotificacionController {
             return ResponseEntity.noContent().build();
     }
 
+    //comunicación con el microservicio de agenda para recibir notificaciones
+    @PostMapping("/enviar") 
+    public void enviarAlerta(@RequestBody NotificacionRequestDTO solicitud) { 
+        System.out.println("====== LOG DE NOTIFICACIONES ======");
+        System.out.println("Mensaje recibido: " + solicitud.getMensaje()); 
+        System.out.println("====================================");
+
+    }
+
 }
 
 
