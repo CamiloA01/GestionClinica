@@ -3,7 +3,7 @@ package com.pago.servicio_de_pagos.controller;
 import com.pago.servicio_de_pagos.service.pagoService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class pagoController {
 
-    @Autowired
+
     private final pagoService pagoService;
 
     // Obtener todos los pagos
