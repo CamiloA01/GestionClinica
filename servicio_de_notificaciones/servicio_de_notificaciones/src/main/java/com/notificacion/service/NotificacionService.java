@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.notificacion.model.Notificacion;
 import com.notificacion.model.dto.NotificacionResponseDTO;
 import com.notificacion.model.dto.NotificacionRequestDTO;
-import com.notificacion.repository.NotificacionRepository;
+import com.notificacion.repository.notificacionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificacionService {
 
-    private final NotificacionRepository notificacionRepository;
+    private final notificacionRepository notificacionRepository;
 
     //MAPEO PRIVADO ENTRE ENTIDAD Y ResponseDTO
     private NotificacionResponseDTO mapToDTO(Notificacion notificacion){

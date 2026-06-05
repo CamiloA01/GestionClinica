@@ -8,12 +8,15 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+
 @Component
-public class ClinicaModelAssembler implements RepresentationModelAssembler<Usuario, EntityModel<Usuario> {
+public class ClinicaModelAssembler implements RepresentationModelAssembler<Usuario, EntityModel<Usuario>> {
+   
     @Override
     public EntityModel<Usuario> toModel(Usuario usuario){
         return EntityModel.of(usuario,
-                linkTo(methodOn(usuarioController.class).getAllUsuarios()).withRel("carreras"));
+                linkTo(methodOn(usuarioController.class).getAllUsuarios()).withRel("carreras"),
+                linkTo(methodOn(usuarioController.class).buscarPorId(usuario.getId())).withSelfRel());
         
     }
 
