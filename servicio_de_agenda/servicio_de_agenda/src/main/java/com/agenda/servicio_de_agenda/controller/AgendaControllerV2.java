@@ -6,11 +6,17 @@ import com.agenda.servicio_de_agenda.model.dto.AgendaRequestDTO;
 import com.agenda.servicio_de_agenda.service.AgendaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/v2/agendas")
@@ -23,8 +29,13 @@ public class AgendaControllerV2 {
     private AgendaModelAssembler agendaModelAssembler;
 
     @GetMapping
-    public ResponseEntity<List<Agenda>> listarAgendas() {
-        return ResponseEntity.ok(agendaService.obtenerTodas());
+    public CollectionModel<EntityModel<Agenda>> listarAgendas() {
+        List<EntityModel<Agenda>> agendas = agendaService.obtenerTodas().stream()
+                .map(agendaModelAssembler::toModel)
+                .toList();
+
+        return CollectionModel.of(agendas,
+                linkTo(methodOn(AgendaControllerV2.class).listarAgendas()).withSelfRel());
     }
 
     @PostMapping

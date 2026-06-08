@@ -10,7 +10,7 @@ public class AgendaModelAssembler implements RepresentationModelAssembler <Agend
 
     @Override
     public EntityModel<Agenda> toModel(Agenda agenda){
-        return EntityModel.of(agenda, )
+        return EntityModel.of(agenda);
     }
 
 }
