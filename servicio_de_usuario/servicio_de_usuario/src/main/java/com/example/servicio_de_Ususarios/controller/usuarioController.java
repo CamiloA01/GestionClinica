@@ -48,9 +48,14 @@ public class usuarioController {
                 linkTo(methodOn(usuarioController.class).getAllUsuarios()).withSelfRel());
     }
 
-    @GetMapping
-    public EntityModel<UsuarioResponseDTO>
-
+    @GetMapping("/{id}") // 1. Corregida la ruta para recibir el ID
+    public EntityModel<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
+    // 2. Se maneja el Optional con orElseThrow y se agrega el punto y coma faltante
+        UsuarioResponseDTO dto = usuarioService.getUsuarioById(id)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+            
+    return assambler.toModel(dto);
+        }
 
     @PostMapping("/registrar")
     public ResponseEntity<UsuarioResponseDTO> registrarUsuario(@RequestBody UsuarioRequestDTO request){
@@ -84,10 +89,9 @@ public class usuarioController {
     }       
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<UsuarioResponseDTO>> buscarPorId(
-        @PathVariable Long id) {
+    // CORREGIDO: Cambiado de @PathVariable a @RequestParam para URLs tipo: /buscar?id=1
+    public ResponseEntity<List<UsuarioResponseDTO>> buscarPorId(@RequestParam Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
-
     }
 }
 
