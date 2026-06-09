@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class AgendaControllerV2 {
     @Autowired
     private AgendaModelAssembler agendaModelAssembler;
 
-    @GetMapping
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
     public CollectionModel<EntityModel<Agenda>> listarAgendas() {
         List<EntityModel<Agenda>> agendas = agendaService.obtenerTodas().stream()
                 .map(agendaModelAssembler::toModel)
@@ -38,17 +39,21 @@ public class AgendaControllerV2 {
                 linkTo(methodOn(AgendaControllerV2.class).listarAgendas()).withSelfRel());
     }
 
-    @PostMapping
-    public ResponseEntity<Agenda> crearAgenda(@Valid @RequestBody AgendaRequestDTO dto) {
-        return new ResponseEntity<>(agendaService.guardar(dto), HttpStatus.CREATED);
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<Agenda>> crearAgenda(@Valid @RequestBody AgendaRequestDTO dto) {
+        Agenda NuevaAgenda = agendaService.guardar(dto);
+        return ResponseEntity
+                .created(linkTo(methodOn(AgendaControllerV2.class).buscarPorId(NuevaAgenda.getId())).toUri())
+              .body(agendaModelAssembler.toModel(NuevaAgenda));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Agenda> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(agendaService.obtenerPorId(id));
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<Agenda>> buscarPorId(@PathVariable Long id) {
+        Agenda agenda = agendaService.obtenerPorId(id);
+        return ResponseEntity.ok(agendaModelAssembler.toModel(agenda));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         agendaService.eliminar(id);
         return ResponseEntity.noContent().build();
