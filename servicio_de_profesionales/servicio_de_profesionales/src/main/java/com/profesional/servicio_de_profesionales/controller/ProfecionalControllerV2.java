@@ -39,7 +39,7 @@ public class ProfecionalControllerV2 {
                     .collect(Collectors.toList());
         
         return CollectionModel.of(profesional,
-                linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos().withSelfRel());
+                linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos().withSelfRel()));
         
     }
 

@@ -63,17 +63,7 @@ public class usuarioController {
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
     
-    //@GetMapping
-    //public ResponseEntity<?> getAllUsuarios() {
-    //    return ResponseEntity.ok(usuarioService.getAllUsuarios());
-   //}
-    
-    //@GetMapping("/{id}")
-    //public ResponseEntity<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
-    //    return usuarioService.getUsuarioById(id)
-    //        .map(ResponseEntity::ok)
-    //        .orElse(ResponseEntity.notFound().build());
-    //}
+
     
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDTO requestDTO) {
