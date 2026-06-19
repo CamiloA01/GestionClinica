@@ -29,7 +29,7 @@ public class ReservaService {
         );
     }
 
-    public List<ReservaResponseDTO> obtenerTodos() {
+    public List<ReservaResponseDTO> getAllReservas() {
         return reservaRepository.findAll()
                 .stream()
                 .map(this::mapToDTO)

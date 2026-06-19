@@ -19,7 +19,10 @@ public class ClinicaModelAssembler implements RepresentationModelAssembler<Reser
             // Link al recurso individual (asumiendo que corriges el endpoint /buscar/{id} o /{id})
             linkTo(methodOn(ReservaController.class).obtenerReservaPorId(dto.getId())).withSelfRel(),
             // Link a la lista completa
-            linkTo(methodOn(ReservaController.class).obtenerTodasLasReservas()).withRel("reservas")
+            linkTo(methodOn(ReservaController.class).obtenerTodasLasReservas()).withRel("reservas"),
+            // Link para crear una nueva reserva
+            linkTo(methodOn(ReservaController.class).crearReserva(null)).withRel("crearReserva")
+
         );
     }
 }
