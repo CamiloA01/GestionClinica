@@ -4,31 +4,34 @@ import com.profesional.servicio_de_profesionales.dto.ProfesionalRequestDTO;
 import com.profesional.servicio_de_profesionales.dto.ProfesionalResponseDTO;
 import com.profesional.servicio_de_profesionales.model.Profesional;
 import com.profesional.servicio_de_profesionales.repository.ProfesionalRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProfesionalService {
-    private final ProfesionalRepository profesionalRepository;
 
-    private ProfesionalResponseDTO mapToDTO(Profesional profesional){
+    @Autowired
+    private ProfesionalRepository profesionalRepository;
+
+    // ── Mapeo interno DTO ────────────────────────────────────────────────────────
+    private ProfesionalResponseDTO mapToDTO(Profesional profesional) {
         return new ProfesionalResponseDTO(
-            profesional.getId(),
-            profesional.getUsuarioId(),
-            profesional.getNombre(),
-            profesional.getApellidopa(),
-            profesional.getApellidoma(),
-            profesional.getRun(),
-            profesional.getTitulo(),
-            profesional.getFechacontrato()
+                profesional.getId(),
+                profesional.getUsuarioId(),
+                profesional.getNombre(),
+                profesional.getApellidopa(),
+                profesional.getApellidoma(),
+                profesional.getRun(),
+                profesional.getTitulo(),
+                profesional.getFechacontrato()
         );
     }
 
+    // ── Métodos que devuelven DTO (usados por ControllerV1) ──────────────────────
     public List<ProfesionalResponseDTO> obtenerTodos() {
         return profesionalRepository.findAll()
                 .stream()
@@ -71,5 +74,12 @@ public class ProfesionalService {
         profesionalRepository.deleteById(id);
     }
 
-    
+    // ── Métodos que devuelven Entidad (usados por ControllerV2 / HATEOAS) ────────
+    public List<Profesional> obtenerTodosEntidad() {
+        return profesionalRepository.findAll();
+    }
+
+    public Profesional obtenerEntidadPorId(Long id) {
+        return profesionalRepository.findById(id).orElse(null);
+    }
 }
