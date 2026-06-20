@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -73,10 +74,14 @@ public class usuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarUsuario(@PathVariable Long id) {
+    public ResponseEntity<RepresentationModel<?>> eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
-        return ResponseEntity.noContent().build();
-    }       
+        
+        RepresentationModel<?> modeloResponse = new RepresentationModel<>();
+        modeloResponse.add(linkTo(methodOn(usuarioController.class).getAllUsuarios()).withRel("usuarios"));
+        
+        return ResponseEntity.ok(modeloResponse);
+    }    
 
     @GetMapping("/buscar")
     // CORREGIDO: Cambiado de @PathVariable a @RequestParam para URLs tipo: /buscar?id=1
