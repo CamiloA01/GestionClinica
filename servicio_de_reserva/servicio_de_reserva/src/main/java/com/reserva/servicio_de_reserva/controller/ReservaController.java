@@ -52,6 +52,17 @@ public class ReservaController {
         return assembler.toModel(dto);
     }
 
+    @PostMapping
+    public ResponseEntity<EntityModel<ReservaResponseDTO>> crearReserva(@Valid @RequestBody ReservaRequestDTO reservaRequestDTO) {
+    // 1. Guardamos la reserva en la base de datos
+    ReservaResponseDTO reservaResponseDTO = reservaService.guardar(reservaRequestDTO);
+    
+    // 2. Retornamos un HTTP 201 CREATED con el DTO enriquecido con enlaces HATEOAS
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(assembler.toModel(reservaResponseDTO));
+    }
+    
    @PutMapping("/{id}")
     public ResponseEntity<EntityModel<ReservaResponseDTO>> actualizarReserva(@PathVariable Long id, @Valid @RequestBody ReservaRequestDTO reservaRequestDTO) {
     

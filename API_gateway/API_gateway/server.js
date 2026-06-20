@@ -51,16 +51,16 @@ const proxyOptions = (target) => ({
 });
 
 // Enrutamiento a cada microservicio (Asumiendo que corren en localhost con distintos puertos)
-app.use('/api/usuarios', createProxyMiddleware(proxyOptions('http://localhost:3001')));
-app.use('/api/pacientes', createProxyMiddleware(proxyOptions('http://localhost:3002')));
-app.use('/api/profesionales', createProxyMiddleware(proxyOptions('http://localhost:3003')));
-app.use('/api/especialidades', createProxyMiddleware(proxyOptions('http://localhost:3004')));
-app.use('/api/agendas', createProxyMiddleware(proxyOptions('http://localhost:3005')));
-app.use('/api/reservas', createProxyMiddleware(proxyOptions('http://localhost:3006')));
-app.use('/api/pagos', createProxyMiddleware(proxyOptions('http://localhost:3007')));
-app.use('/api/notificaciones', createProxyMiddleware(proxyOptions('http://localhost:3008')));
-app.use('/api/sucursales', createProxyMiddleware(proxyOptions('http://localhost:3009')));
-app.use('/api/reportes', createProxyMiddleware(proxyOptions('http://localhost:3010')));
+app.use('/api/usuarios', createProxyMiddleware(proxyOptions('http://localhost:8081')));
+app.use('/api/pacientes', createProxyMiddleware(proxyOptions('http://localhost:8086')));
+app.use('/api/profesionales', createProxyMiddleware(proxyOptions('http://localhost:8084')));
+app.use('/api/especialidades', createProxyMiddleware(proxyOptions('http://localhost:8089')));
+app.use('/api/agendas', createProxyMiddleware(proxyOptions('http://localhost:8090')));
+app.use('/api/reservas', createProxyMiddleware(proxyOptions('http://localhost:8082')));
+app.use('/api/pagos', createProxyMiddleware(proxyOptions('http://localhost:8085')));
+app.use('/api/notificaciones', createProxyMiddleware(proxyOptions('http://localhost:8087')));
+app.use('/api/sucursales', createProxyMiddleware(proxyOptions('http://localhost:8088')));
+app.use('/api/reportes', createProxyMiddleware(proxyOptions('http://localhost:8083')));
 
 // --- 4. INICIO DEL SERVIDOR ---
 app.listen(PORT, () => {

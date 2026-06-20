@@ -3,64 +3,67 @@ package com.profesional.servicio_de_profesionales.controller;
 import com.profesional.servicio_de_profesionales.dto.*;
 import com.profesional.servicio_de_profesionales.service.ProfesionalService;
 import com.profesional.servicio_de_profesionales.assemblers.ProfesionalModelAssemblers;
-import com.profesional.servicio_de_profesionales.model.Profesional;
-import com.profesional.servicio_de_profesionales.controller.*;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v2/profesional")
+@RequiredArgsConstructor // Reemplaza @Autowired en los campos por inyección mediante constructor implícito de Lombok
 public class ProfecionalControllerV2 {
 
-    @Autowired
-    private ProfesionalService profesionalService;
-
-    @Autowired
-    private ProfesionalModelAssemblers assemblers;
+    private final ProfesionalService profesionalService;
+    private final ProfesionalModelAssemblers assemblers;
 
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<List<ProfesionalResponseDTO>> obtenerTodos() {
-        List<EntityModel<Profesional>> profesional = profesionalService.findAll().stream()
-                    .map(assemblers::toModel)
-                    .collect(Collectors.toList());
+    public CollectionModel<EntityModel<ProfesionalResponseDTO>> obtenerTodos() {
+        // 1. Convertimos la lista del servicio en modelos HATEOAS usando el assembler
+        List<EntityModel<ProfesionalResponseDTO>> profesionalesModel = profesionalService.obtenerTodos().stream()
+                .map(assemblers::toModel) // Tu assembler debe recibir ProfesionalResponseDTO
+                .collect(Collectors.toList());
         
-        return CollectionModel.of(profesional,
-                linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos().withSelfRel()));
-        
+        // 2. Retornamos el CollectionModel con su respectivo Self Link corregido
+        return CollectionModel.of(profesionalesModel,
+                linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos()).withSelfRel());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProfesionalResponseDTO> obtenerPorId(@PathVariable Long id) {
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public EntityModel<ProfesionalResponseDTO> obtenerPorId(@PathVariable Long id) {
         return profesionalService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .map(assemblers::toModel) // Enriquecemos con HATEOAS
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profesional no encontrado"));
     }
 
-    @PostMapping
-    public ResponseEntity<ProfesionalResponseDTO> crear(
-            @Valid @RequestBody ProfesionalRequestDTO dto) {
-        return ResponseEntity.status(201).body(profesionalService.guardar(dto));
+    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<ProfesionalResponseDTO>> crear(@Valid @RequestBody ProfesionalRequestDTO dto) {
+        ProfesionalResponseDTO nuevoProfesional = profesionalService.guardar(dto);
+        
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(assemblers.toModel(nuevoProfesional)); // Respuesta de creación con HATEOAS
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProfesionalResponseDTO> actualizar (
+    @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<ProfesionalResponseDTO>> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody ProfesionalRequestDTO dto) {
+            
         return profesionalService.actualizar(id, dto)
+                .map(assemblers::toModel) // Transforma a EntityModel si existe
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
