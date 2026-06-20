@@ -1,0 +1,55 @@
+# docker-compose.yml - Solo usuario, agenda y profesionales
+# Ubicar en la raíz del proyecto (junto a las 3 carpetas de servicios)
+#
+# Wallets de Oracle: ver sección C del README.
+
+version: "3.9"
+
+services:
+
+  servicio_usuario:
+    build:
+      context: ./servicio_de_usuario/servicio_de_usuario
+      dockerfile: Dockerfile
+    container_name: servicio_usuario
+    ports:
+      - "8081:8081"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_usuario:/wallet
+    networks:
+      - clinica-net
+
+  servicio_profesionales:
+    build:
+      context: ./servicio_de_profesionales/servicio_de_profesionales
+      dockerfile: Dockerfile
+    container_name: servicio_profesionales
+    ports:
+      - "8084:8084"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_profesional:/wallet
+    networks:
+      - clinica-net
+
+  servicio_agenda:
+    build:
+      context: ./servicio_de_agenda/servicio_de_agenda
+      dockerfile: Dockerfile
+    container_name: servicio_agenda
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_agenda:/wallet
+    networks:
+      - clinica-net
+
+networks:
+  clinica-net:
+    driver: bridge
