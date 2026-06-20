@@ -4,51 +4,110 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = 'tu_clave_secreta_super_segura'; // Esto debe ir en un archivo .env
+const JWT_SECRET = 'tu_clave_secreta_super_segura';
 
-// --- 1. MIDDLEWARES DE SEGURIDAD GLOBALES ---
-app.use(helmet()); // Protege las cabeceras HTTP
-app.use(cors()); // Permite peticiones desde el frontend (ej. React o Angular)
+// --- DEFINICIÓN DE MICROSERVICIOS ---
+const microservicios = [
+    { nombre: 'Usuarios',        ruta: '/api/usuarios',       puerto: 8081 },
+    { nombre: 'Reservas',        ruta: '/api/reservas',       puerto: 8082 },
+    { nombre: 'Reportes',        ruta: '/api/reportes',       puerto: 8083 },
+    { nombre: 'Profesionales',   ruta: '/api/profesionales',  puerto: 8084 },
+    { nombre: 'Pagos',           ruta: '/api/pagos',          puerto: 8085 },
+    { nombre: 'Agenda',          ruta: '/api/agendas',        puerto: 8086 },
+    { nombre: 'Notificaciones',  ruta: '/api/notificaciones', puerto: 8087 },
+    { nombre: 'Ficha Clinica',   ruta: '/api/ficha-clinica',  puerto: 8088 },
+    { nombre: 'Especialidades',  ruta: '/api/especialidades', puerto: 8089 },
+    { nombre: 'Pacientes',       ruta: '/api/pacientes',      puerto: 8090 },
+];
 
-// Limitador de peticiones (Rate Limiting) para evitar ataques DDoS o fuerza bruta
+// --- 1. HEALTH CHECK DE MICROSERVICIO ---
+const verificarConexion = (puerto) => {
+    return new Promise((resolve) => {
+        const req = http.get(`http://localhost:${puerto}/actuator/health`, (res) => {
+            resolve(res.statusCode === 200);
+        });
+        req.setTimeout(2000, () => {
+            req.destroy();
+            resolve(false);
+        });
+        req.on('error', () => resolve(false));
+    });
+};
+
+// --- 2. MOSTRAR ESTADO DE MICROSERVICIOS AL ARRANCAR ---
+const mostrarEstado = async () => {
+    console.log('\n╔══════════════════════════════════════════════════════════╗');
+    console.log('║       SISTEMA DE GESTION CLINICA - GATEWAY               ║');
+    console.log('╠══════════════════════════════════════════════════════════╣');
+    console.log(`║  Gateway corriendo en: http://localhost:${PORT}              ║`);
+    console.log('╠══════════════════════════════════════════════════════════╣');
+    console.log('║  ESTADO DE MICROSERVICIOS:                               ║');
+    console.log('╠══════════════════════════════════════════════════════════╣');
+
+    let online = 0;
+    let offline = 0;
+
+    for (const ms of microservicios) {
+        const conectado = await verificarConexion(ms.puerto);
+        const estado = conectado ? '🟢 ONLINE ' : '🔴 OFFLINE';
+        if (conectado) online++; else offline++;
+        console.log(`║  ${estado}  ${ms.nombre.padEnd(16)} → localhost:${ms.puerto}  ║`);
+    }
+
+    console.log('╠══════════════════════════════════════════════════════════╣');
+    console.log(`║  Online: ${String(online).padEnd(2)}  |  Offline: ${String(offline).padEnd(2)}                            ║`);
+    console.log('╚══════════════════════════════════════════════════════════╝\n');
+};
+
+// --- 3. MIDDLEWARES DE SEGURIDAD ---
+app.use(helmet());
+app.use(cors());
+
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // Límite de 100 peticiones por IP cada 15 minutos
-    message: "Demasiadas peticiones desde esta IP, por favor intente de nuevo más tarde."
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { error: 'Demasiadas peticiones. Intente mas tarde.' }
 });
 app.use(limiter);
 
-// --- 2. MIDDLEWARE DE AUTENTICACIÓN ---
-// Verifica que el usuario tenga un token JWT válido antes de acceder a servicios privados
+// --- 4. MIDDLEWARE DE AUTENTICACION ---
 const verificarToken = (req, res, next) => {
-    // Excluimos rutas que no necesitan token (como el login o registro)
     if (req.path.startsWith('/api/usuarios/auth')) return next();
 
     const token = req.headers['authorization'];
     if (!token) return res.status(403).json({ error: 'Token requerido para acceder' });
 
     try {
-        const tokenLimpio = token.split(" ")[1]; // Quita la palabra "Bearer"
+        const tokenLimpio = token.split(' ')[1];
         const decodificado = jwt.verify(tokenLimpio, JWT_SECRET);
-        req.usuario = decodificado; // Agrega los datos del usuario a la petición
+        req.usuario = decodificado;
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'Token inválido o expirado' });
+        return res.status(401).json({ error: 'Token invalido o expirado' });
     }
 };
 
 app.use('/api', verificarToken);
 
-// --- 3. RUTAS Y PROXYS DE LOS MICROSERVICIOS ---
-// Configuración base para los proxies
-const proxyOptions = (target) => ({
-    target,
+// --- 5. REGISTRO DINAMICO DE RUTAS Y PROXYS ---
+const proxyOptions = (puerto) => ({
+    target: `http://localhost:${puerto}`,
     changeOrigin: true,
-    pathRewrite: { '^/api': '' }, // Quita '/api' al enviar la petición al microservicio
+    pathRewrite: { '^/api': '' },
+    on: {
+        error: (err, req, res) => {
+            res.status(503).json({
+                error: 'Microservicio no disponible',
+                detalle: `No se pudo conectar al servicio en puerto ${puerto}`
+            });
+        }
+    }
 });
+
 
 // Enrutamiento a cada microservicio (Asumiendo que corren en localhost con distintos puertos)
 app.use('/api/usuarios', createProxyMiddleware(proxyOptions('http://localhost:8081')));
@@ -62,8 +121,12 @@ app.use('/api/notificaciones', createProxyMiddleware(proxyOptions('http://localh
 app.use('/api/sucursales', createProxyMiddleware(proxyOptions('http://localhost:8088')));
 app.use('/api/reportes', createProxyMiddleware(proxyOptions('http://localhost:8083')));
 
-// --- 4. INICIO DEL SERVIDOR ---
-app.listen(PORT, () => {
-    console.log(`🚀 API Gateway ejecutándose en el puerto ${PORT}`);
-    console.log(`Redirigiendo tráfico hacia los 10 microservicios del sistema clínico...`);
+// --- 6. RUTA DE HEALTH CHECK DEL GATEWAY ---
+app.get('/health', (req, res) => {
+    res.json({ status: 'UP', gateway: 'API Gateway Clinica', puerto: PORT });
+});
+
+// --- 7. ARRANQUE DEL SERVIDOR ---
+app.listen(PORT, async () => {
+    await mostrarEstado();
 });

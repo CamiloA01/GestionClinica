@@ -44,7 +44,7 @@ public class AgendaControllerV2 {
         Agenda NuevaAgenda = agendaService.guardar(dto);
         return ResponseEntity
                 .created(linkTo(methodOn(AgendaControllerV2.class).buscarPorId(NuevaAgenda.getId())).toUri())
-              .body(agendaModelAssembler.toModel(NuevaAgenda));
+            .body(agendaModelAssembler.toModel(NuevaAgenda));
     }
 
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
