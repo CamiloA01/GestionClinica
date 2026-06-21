@@ -1,11 +1,30 @@
-# docker-compose.yml - Solo usuario, agenda y profesionales
-# Ubicar en la raíz del proyecto (junto a las 3 carpetas de servicios)
+# docker-compose.yml - Todos los microservicios + API Gateway
+# Ubicar en la raíz del proyecto (reemplaza el docker-compose.yml actual)
 #
-# Wallets de Oracle: ver sección C del README.
+# IMPORTANTE - Oracle Wallet:
+# Cada microservicio usa Oracle con Wallet. Dentro de Docker, la ruta de Windows
+# (C:/Wallet_X) no existe. Hay que montar cada wallet como volumen.
+# Crea en la raíz: wallets/wallet_usuario/, wallets/wallet_agenda/, etc.
+# con los archivos del wallet correspondiente, y cambia en cada
+# application.properties/yaml la URL para usar ${TNS_ADMIN:C:/Wallet_X}
 
 version: "3.9"
 
 services:
+
+  api_gateway:
+    build:
+      context: ./API_gateway/API_gateway
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - servicio_usuario
+      - servicio_agenda
+      - servicio_profesionales
+    networks:
+      - clinica-net
 
   servicio_usuario:
     build:
@@ -17,7 +36,35 @@ services:
     environment:
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/Wallet_Usuario:/wallet
+      - ./wallets/wallet_usuario:/wallet
+    networks:
+      - clinica-net
+
+  servicio_reserva:
+    build:
+      context: ./servicio_de_reserva/servicio_de_reserva
+      dockerfile: Dockerfile
+    container_name: servicio_reserva
+    ports:
+      - "8082:8082"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_reserva:/wallet
+    networks:
+      - clinica-net
+
+  servicio_reportes:
+    build:
+      context: ./servicio_de_reportes/servicio_de_reportes
+      dockerfile: Dockerfile
+    container_name: servicio_reportes
+    ports:
+      - "8083:8083"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_reportes:/wallet
     networks:
       - clinica-net
 
@@ -31,7 +78,21 @@ services:
     environment:
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/Wallet_Profesionales:/wallet
+      - ./wallets/wallet_profesional:/wallet
+    networks:
+      - clinica-net
+
+  servicio_pagos:
+    build:
+      context: ./servicio_de_pagos/servicio_de_pagos
+      dockerfile: Dockerfile
+    container_name: servicio_pagos
+    ports:
+      - "8085:8085"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_pagos:/wallet
     networks:
       - clinica-net
 
@@ -46,7 +107,63 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/Wallet_Agenda:/wallet
+      - ./wallets/wallet_agenda:/wallet
+    networks:
+      - clinica-net
+
+  servicio_notificaciones:
+    build:
+      context: ./servicio_de_notificaciones/servicio_de_notificaciones
+      dockerfile: Dockerfile
+    container_name: servicio_notificaciones
+    ports:
+      - "8087:8087"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_notificaciones:/wallet
+    networks:
+      - clinica-net
+
+  servicio_ficha_clinica:
+    build:
+      context: ./servicio_de_ficha_clinica/servicio_de_ficha_clinica
+      dockerfile: Dockerfile
+    container_name: servicio_ficha_clinica
+    ports:
+      - "8088:8088"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_fichaclinica:/wallet
+    networks:
+      - clinica-net
+
+  servicio_especialidades:
+    build:
+      context: ./servicio_de_especialidades/servicio_de_especialidades
+      dockerfile: Dockerfile
+    container_name: servicio_especialidades
+    ports:
+      - "8089:8089"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_especialidades:/wallet
+    networks:
+      - clinica-net
+
+  servicio_pacientes:
+    build:
+      context: ./servicio_de_pacientes/servicio_de_pacientes
+      dockerfile: Dockerfile
+    container_name: servicio_pacientes
+    ports:
+      - "8090:8090"
+    environment:
+      - TNS_ADMIN=/wallet
+    volumes:
+      - ./wallets/wallet_pacientes:/wallet
     networks:
       - clinica-net
 
