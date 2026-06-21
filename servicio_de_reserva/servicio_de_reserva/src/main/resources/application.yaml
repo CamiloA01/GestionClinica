@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: servicio_de_reserva
+    name: servicio_de_Reserva
     
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
