@@ -14,8 +14,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
 
+
 logging:
   level:
-    org.hibernate: DEBUG
-    com.zaxxer.hikari: DEBUG
-    java.sql: DEBUG
+    org:
+      hibernate: DEBUG
+    com:
+      zaxxer:
+        hikari: DEBUG
+    java:
+      sql: DEBUG

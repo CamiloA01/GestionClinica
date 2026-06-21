@@ -31,7 +31,7 @@ services:
     environment:
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/wallet_profesional:/wallet
+      - ./wallets/Wallet_Profesionales:/wallet
     networks:
       - clinica-net
 
@@ -46,7 +46,7 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/wallet_agenda:/wallet
+      - ./wallets/Wallet_Agenda:/wallet
     networks:
       - clinica-net
 
