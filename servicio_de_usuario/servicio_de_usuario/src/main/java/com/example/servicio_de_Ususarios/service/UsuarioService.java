@@ -30,7 +30,6 @@ public class UsuarioService {
                 usuario.getId(),
                 usuario.getUsername(),
                 usuario.getGmail(),
-                usuario.getPassword(),
                 usuario.getRoll(),
                 usuario.getEstado()
         );
@@ -107,7 +106,6 @@ public class UsuarioService {
         response.setId(guardado.getId());
         response.setUsername(guardado.getUsername());
         response.setGmail(guardado.getGmail());
-        response.setPassword(guardado.getPassword());
         response.setRoll(guardado.getRoll());
         response.setEstado(guardado.getEstado());
 

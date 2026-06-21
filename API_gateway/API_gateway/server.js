@@ -97,7 +97,7 @@ app.use('/api', verificarToken);
 const proxyOptions = (puerto) => ({
     target: `http://localhost:${puerto}`,
     changeOrigin: true,
-    pathRewrite: { '^/api': '' },
+    pathRewrite: {},
     on: {
         error: (err, req, res) => {
             res.status(503).json({

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.*;
  * Test de servicio: no toca la BD ni Feign, todo está mockeado.
  * Se enfoca en la lógica de negocio pura de AgendaService.
  */
+@SuppressWarnings("null")
 @ExtendWith(MockitoExtension.class)
 class AgendaServiceTest {
 

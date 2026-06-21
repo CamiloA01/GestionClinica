@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * AgendaService está mockeado con @MockBean.
  * Se verifica que los endpoints respondan con el HTTP status y body correctos.
  */
+@SuppressWarnings("null")
 @WebMvcTest(AgendaController.class)
 @ActiveProfiles("test")
 class AgendaControllerTest {

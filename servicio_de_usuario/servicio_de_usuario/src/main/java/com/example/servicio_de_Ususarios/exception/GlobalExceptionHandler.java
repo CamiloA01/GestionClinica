@@ -1,11 +1,13 @@
 package com.example.servicio_de_Ususarios.exception;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(
@@ -35,10 +37,10 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new LinkedHashMap<>();
         error.put("error", ex.getMessage());
 
-        // 400 Bad Request: el cliente envió un dato que no existe
+        // 404 Not Found: el cliente envió un dato que no existe
         // (un categoriaId inválido es un error del cliente, no del servidor).
-        // Usamos 400 y no 500 porque el servidor funcionó correctamente;
+        // Usamos 404 y no 500 porque el servidor funcionó correctamente;
         // fue el dato enviado el que causó el problema.
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

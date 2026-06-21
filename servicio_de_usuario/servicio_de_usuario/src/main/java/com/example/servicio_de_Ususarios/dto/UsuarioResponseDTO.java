@@ -12,7 +12,6 @@ public class UsuarioResponseDTO {
     private Long id;
     private String username;
     private String gmail;
-    private String password;
     private String roll;
     private String estado;
 }

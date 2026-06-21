@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @DataJpaTest levanta solo la capa JPA, sin contexto web ni Feign.
  * Cada test hace rollback automático → la BD siempre queda limpia.
  */
+@SuppressWarnings("null")
 @DataJpaTest
 @ActiveProfiles("test")
 class AgendaRepositoryTest {

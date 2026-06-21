@@ -8,6 +8,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+@SuppressWarnings("null")
 @Component
 public class PagoModelAssembler implements RepresentationModelAssembler<PagoResponceDTO, EntityModel<PagoResponceDTO>> {
 

@@ -7,6 +7,6 @@ import com.ficha_clinica.servicio_de_ficha_clinica.model.Ficha;
 public interface FichaRepository extends JpaRepository<Ficha, Long> {
 
     // Para ver todas las fichas clínicas de un paciente específico
-    List<Ficha> findByIdPaciente(Long idPaciente);
+    List<Ficha> findByPacienteId(Long idPaciente);
 
 }

@@ -1,16 +1,24 @@
 package com.agenda.servicio_de_agenda.assemblers;
 
-import com.agenda.servicio_de_agenda.model.Agenda;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-@Component
-public class AgendaModelAssembler implements RepresentationModelAssembler <Agenda, EntityModel<Agenda>>{
+import com.agenda.servicio_de_agenda.model.dto.AgendaResponseDTO;
 
+@Component
+public class AgendaModelAssembler implements RepresentationModelAssembler <AgendaResponseDTO, EntityModel<AgendaResponseDTO>> {
+
+    @SuppressWarnings("null")
     @Override
-    public EntityModel<Agenda> toModel(Agenda agenda){
-        return EntityModel.of(agenda);
+    public EntityModel<AgendaResponseDTO> toModel(AgendaResponseDTO dto) {
+        return EntityModel.of(dto,
+            linkTo(methodOn(com.agenda.servicio_de_agenda.controller.AgendaController.class).buscarPorId(dto.getId())).withSelfRel(),
+            linkTo(methodOn(com.agenda.servicio_de_agenda.controller.AgendaController.class).listarAgendas()).withRel("agendas")
+        );
     }
 
 }

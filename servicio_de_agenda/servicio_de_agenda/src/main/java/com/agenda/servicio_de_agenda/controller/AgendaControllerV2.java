@@ -3,8 +3,11 @@ package com.agenda.servicio_de_agenda.controller;
 import com.agenda.servicio_de_agenda.assemblers.AgendaModelAssembler;
 import com.agenda.servicio_de_agenda.model.Agenda;
 import com.agenda.servicio_de_agenda.model.dto.AgendaRequestDTO;
+import com.agenda.servicio_de_agenda.model.dto.AgendaResponseDTO;
 import com.agenda.servicio_de_agenda.service.AgendaService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -14,49 +17,122 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+
+@SuppressWarnings("null")
 @RestController
 @RequestMapping("/api/v2/agendas")
 public class AgendaControllerV2 {
 
+
     @Autowired
     private AgendaService agendaService;
+
 
     @Autowired
     private AgendaModelAssembler agendaModelAssembler;
 
+
+
+    // LISTAR TODAS LAS AGENDAS
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    public CollectionModel<EntityModel<Agenda>> listarAgendas() {
-        List<EntityModel<Agenda>> agendas = agendaService.obtenerTodas().stream()
+    public CollectionModel<EntityModel<AgendaResponseDTO>> listarAgendas() {
+
+
+        List<EntityModel<AgendaResponseDTO>> agendas =
+                agendaService.obtenerTodas()
+                .stream()
+                .map(this::convertirDTO)
                 .map(agendaModelAssembler::toModel)
                 .toList();
 
-        return CollectionModel.of(agendas,
-                linkTo(methodOn(AgendaControllerV2.class).listarAgendas()).withSelfRel());
+
+        return CollectionModel.of(
+                agendas,
+                linkTo(
+                    methodOn(AgendaControllerV2.class)
+                    .listarAgendas()
+                ).withSelfRel()
+        );
     }
 
+
+
+
+
+    // CREAR AGENDA
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<Agenda>> crearAgenda(@Valid @RequestBody AgendaRequestDTO dto) {
-        Agenda NuevaAgenda = agendaService.guardar(dto);
+    public ResponseEntity<EntityModel<AgendaResponseDTO>> crearAgenda(
+            @Valid @RequestBody AgendaRequestDTO dto) {
+
+
+        Agenda nuevaAgenda = agendaService.guardar(dto);
+
+
+        AgendaResponseDTO respuesta = convertirDTO(nuevaAgenda);
+
+
         return ResponseEntity
-                .created(linkTo(methodOn(AgendaControllerV2.class).buscarPorId(NuevaAgenda.getId())).toUri())
-            .body(agendaModelAssembler.toModel(NuevaAgenda));
+                .status(HttpStatus.CREATED)
+                .body(
+                    agendaModelAssembler.toModel(respuesta)
+                );
     }
 
-    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<EntityModel<Agenda>> buscarPorId(@PathVariable Long id) {
+
+
+
+
+    // BUSCAR POR ID
+    @GetMapping(value="/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity<EntityModel<AgendaResponseDTO>> buscarPorId(
+            @PathVariable Long id) {
+
+
         Agenda agenda = agendaService.obtenerPorId(id);
-        return ResponseEntity.ok(agendaModelAssembler.toModel(agenda));
+
+
+        AgendaResponseDTO respuesta = convertirDTO(agenda);
+
+
+        return ResponseEntity.ok(
+                agendaModelAssembler.toModel(respuesta)
+        );
     }
 
-    @DeleteMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+
+
+
+
+
+    // ELIMINAR
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+
         agendaService.eliminar(id);
+
+
         return ResponseEntity.noContent().build();
     }
 
+
+
+
+
+    // CONVERSOR ENTITY -> DTO
+    private AgendaResponseDTO convertirDTO(Agenda agenda) {
+        return new AgendaResponseDTO(
+                agenda.getId(),
+                agenda.getIdProfesional(),
+                agenda.getEspecialidad(),
+                agenda.getDiaSemana(),
+                agenda.getHoraInicio(),
+                agenda.getHoraFin(),
+                agenda.getDuracionCita());
+    }
 }

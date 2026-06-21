@@ -5,6 +5,7 @@ import com.example.servicio_de_Ususarios.assembler.*;
 import com.example.servicio_de_Ususarios.dto.*;
 import com.example.servicio_de_Ususarios.model.Usuario;
 import com.example.servicio_de_Ususarios.service.*;
+import com.example.servicio_de_Ususarios.usuarioClient.ProfesionalClient;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ public class usuarioController {
     private final ClinicaModelAssembler assambler;
     
     private final UsuarioService usuarioService;
+
+    private final ProfesionalClient profesionalClient;
 
     @GetMapping
     public CollectionModel<EntityModel<UsuarioResponseDTO>> getAllUsuarios() {
@@ -87,6 +90,12 @@ public class usuarioController {
     // CORREGIDO: Cambiado de @PathVariable a @RequestParam para URLs tipo: /buscar?id=1
     public ResponseEntity<List<UsuarioResponseDTO>> buscarPorId(@RequestParam Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
+    }
+
+    @PostMapping("/crear-profesional")
+    public ResponseEntity<String> enviar(@RequestBody ProfesionalRequest request){
+    profesionalClient.enviarAlerta(request);
+        return ResponseEntity.ok("Enviado correctamente");
     }
 }
 
