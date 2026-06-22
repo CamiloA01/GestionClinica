@@ -6,6 +6,7 @@ import com.profesional.servicio_de_profesionales.assemblers.ProfesionalModelAsse
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v2/profesional")
 @RequiredArgsConstructor // Reemplaza @Autowired en los campos por inyección mediante constructor implícito de Lombok
+@Slf4j
 public class ProfecionalControllerV2 {
 
     private final ProfesionalService profesionalService;
@@ -50,8 +52,13 @@ public class ProfecionalControllerV2 {
 
     @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<EntityModel<ProfesionalResponseDTO>> crear(@Valid @RequestBody ProfesionalRequestDTO dto) {
+        log.info("✅ Comunicación exitosa: petición recibida desde el microservicio de usuario para crear al profesional '{}' (usuarioId={})",
+                dto.getNombre(), dto.getUsuarioId());
+
         ProfesionalResponseDTO nuevoProfesional = profesionalService.guardar(dto);
-        
+
+        log.info("✅ Profesional creado correctamente con id={}", nuevoProfesional.getId());
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(assemblers.toModel(nuevoProfesional)); // Respuesta de creación con HATEOAS

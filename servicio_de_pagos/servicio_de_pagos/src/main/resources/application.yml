@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: servicio_de_pagos
+  profiles:
+    active: dev
+
+server:
+  port: 8085
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /doc/swagger-ui.html
