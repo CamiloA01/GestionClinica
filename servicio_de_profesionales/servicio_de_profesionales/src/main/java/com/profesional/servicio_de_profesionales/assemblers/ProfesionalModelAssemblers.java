@@ -3,21 +3,20 @@ package com.profesional.servicio_de_profesionales.assemblers;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import com.profesional.servicio_de_profesionales.controller.ProfecionalControllerV2;
-import com.profesional.servicio_de_profesionales.dto.ProfesionalResponseDTO; // 1. IMPORTANTE: Importar tu DTO
+import com.profesional.servicio_de_profesionales.model.Profesional;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 @Component
-// 2. CORREGIDO: Cambiados los genéricos de <Profesional> a <ProfesionalResponseDTO>
-public class ProfesionalModelAssemblers implements RepresentationModelAssembler<ProfesionalResponseDTO, EntityModel<ProfesionalResponseDTO>> {
+public class ProfesionalModelAssemblers implements RepresentationModelAssembler<Profesional, EntityModel<Profesional>> {
 
     @Override
-    // 3. CORREGIDO: El método ahora recibe y devuelve el DTO estructurado
-    public EntityModel<ProfesionalResponseDTO> toModel(ProfesionalResponseDTO dto) {
-        return EntityModel.of(dto,
-            linkTo(methodOn(ProfecionalControllerV2.class).obtenerPorId(dto.getId())).withSelfRel(),
-            linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos()).withRel("profesionales")
-        );
+    public EntityModel<Profesional> toModel(Profesional profesional) {
+        Link selfLink = linkTo(methodOn(ProfecionalControllerV2.class)
+                .obtenerPorId(profesional.getId())).withSelfRel();
+        Link coleccionLink = Link.of("/api/v2/profesional").withRel("profesionales");
+        return EntityModel.of(profesional, selfLink, coleccionLink);
     }
 }

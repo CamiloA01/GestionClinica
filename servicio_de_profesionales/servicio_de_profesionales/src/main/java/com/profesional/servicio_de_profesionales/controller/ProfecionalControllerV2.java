@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 @RestController
 @RequestMapping("/api/v2/profesional")
 @Tag(name = "Profesionales V2 (HATEOAS)", description = "API con soporte HATEOAS para gestión de profesionales")
@@ -37,15 +35,13 @@ public class ProfecionalControllerV2 {
     private ProfesionalModelAssemblers assembler;
 
     @Operation(summary = "Obtener todos los profesionales con HATEOAS")
-    @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
-    })
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente") })
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
     public CollectionModel<EntityModel<Profesional>> obtenerTodos() {
-        List<EntityModel<Profesional>> profesionales = profesionalService.obtenerTodosEntidad().stream()
-                .map(assembler::toModel)
+        List<Profesional> entidades = profesionalService.obtenerTodosEntidad();
+        List<EntityModel<Profesional>> profesionales = entidades.stream()
+                .map(p -> assembler.toModel(p))
                 .collect(Collectors.toList());
-
         Link selfLink = Link.of("/api/v2/profesional").withSelfRel();
         return CollectionModel.of(profesionales, selfLink);
     }
@@ -69,8 +65,7 @@ public class ProfecionalControllerV2 {
         @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<ProfesionalResponseDTO> crear(
-            @Valid @RequestBody ProfesionalRequestDTO dto) {
+    public ResponseEntity<ProfesionalResponseDTO> crear(@Valid @RequestBody ProfesionalRequestDTO dto) {
         return ResponseEntity.status(201).body(profesionalService.guardar(dto));
     }
 
