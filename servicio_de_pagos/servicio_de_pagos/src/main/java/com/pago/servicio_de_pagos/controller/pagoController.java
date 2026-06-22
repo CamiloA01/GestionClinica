@@ -38,8 +38,7 @@ public class pagoController {
     private final pagoService pagoService;
     private final PagoModelAssembler assembler;
 
-    @Operation(summary = "Listar todos los pagos",
-               description = "Recupera la lista completa de pagos registrados en el sistema.")
+
     @ApiResponse(responseCode = "200", description = "Listado de pagos obtenido exitosamente")
     @GetMapping
     @Operation(summary = "Obtener todos los pagos", description = "Devuelve una lista de todos los pagos disponibles")
@@ -98,8 +97,7 @@ public class pagoController {
                 .body(entityModel);
     }
 
-    @Operation(summary = "Actualizar pago",
-               description = "Actualiza los datos de un pago existente usando su ID.")
+
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Pago actualizado exitosamente"),
         @ApiResponse(responseCode = "404", description = "No existe un pago con ese ID"),

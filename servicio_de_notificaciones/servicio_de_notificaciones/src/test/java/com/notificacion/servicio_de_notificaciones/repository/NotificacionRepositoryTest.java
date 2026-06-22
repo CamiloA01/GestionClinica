@@ -1,6 +1,7 @@
 package com.notificacion.servicio_de_notificaciones.repository;
 
 import com.notificacion.model.Notificacion;
+import com.notificacion.repository.notificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +14,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test de repositorio: usa H2 en memoria con @DataJpaTest.
- * Verifica las operaciones JPA y las queries personalizadas del repositorio.
- * Cada test hace rollback automático → BD siempre limpia.
- */
 @DataJpaTest
 @ActiveProfiles("test")
 class NotificacionRepositoryTest {
 
     @Autowired
-    private NotificacionRepository notificacionRepository;
+    private notificacionRepository notificacionRepository;  // ← nombre exacto del repositorio
 
     private Notificacion notificacionBase;
 
@@ -65,8 +61,7 @@ class NotificacionRepositoryTest {
         List<Notificacion> resultado = notificacionRepository.findByIdUsuario(1L);
 
         assertThat(resultado).hasSize(2);
-        assertThat(resultado).extracting(Notificacion::getIdUsuario)
-                .containsOnly(1L);
+        assertThat(resultado).extracting(Notificacion::getIdUsuario).containsOnly(1L);
     }
 
     @Test

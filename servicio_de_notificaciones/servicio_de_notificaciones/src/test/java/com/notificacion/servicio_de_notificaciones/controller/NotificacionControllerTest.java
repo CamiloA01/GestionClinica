@@ -1,7 +1,8 @@
-package com.notificacion.controller;
+package com.notificacion.servicio_de_notificaciones.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.notificacion.controller.NotificacionController;
 import com.notificacion.model.dto.NotificacionRequestDTO;
 import com.notificacion.model.dto.NotificacionResponseDTO;
 import com.notificacion.service.NotificacionService;
@@ -22,10 +23,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Test de controlador: solo capa web, sin BD.
- * NotificacionService mockeado con @MockBean.
- */
 @WebMvcTest(NotificacionController.class)
 @ActiveProfiles("test")
 class NotificacionControllerTest {
@@ -57,8 +54,6 @@ class NotificacionControllerTest {
         dtoValido.setTipo("CITA");
     }
 
-    // ───── GET /api/notificaciones ───────────────────────────────────────────
-
     @Test
     void listar_debeRetornar200ConListaDeNotificaciones() throws Exception {
         when(notificacionService.obtenerTodas()).thenReturn(List.of(responseMock));
@@ -79,8 +74,6 @@ class NotificacionControllerTest {
                 .andExpect(jsonPath("$").isEmpty());
     }
 
-    // ───── GET /api/notificaciones/{id} ─────────────────────────────────────
-
     @Test
     void obtenerPorId_debeRetornar200CuandoExiste() throws Exception {
         when(notificacionService.obtenerPorId(1L)).thenReturn(responseMock);
@@ -100,18 +93,14 @@ class NotificacionControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // ───── GET /api/notificaciones/usuario/{id} ──────────────────────────────
-
     @Test
     void obtenerPorUsuario_debeRetornar200ConSusNotificaciones() throws Exception {
         when(notificacionService.obtenerPorUsuarioId(1L)).thenReturn(List.of(responseMock));
 
         mockMvc.perform(get("/api/notificaciones/usuario/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].idUsuario").value(1));
+                .andExpect(jsonPath("$[0].usuarioId").value(1));
     }
-
-    // ───── POST /api/notificaciones ──────────────────────────────────────────
 
     @Test
     void crear_debeRetornar201ConNotificacionCreada() throws Exception {
@@ -148,8 +137,6 @@ class NotificacionControllerTest {
 
         verify(notificacionService, never()).guardar(any());
     }
-
-    // ───── DELETE /api/notificaciones/{id} ───────────────────────────────────
 
     @Test
     void eliminar_debeRetornar204CuandoExiste() throws Exception {

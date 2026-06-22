@@ -27,8 +27,6 @@ public class NotificacionController {
 
     private final NotificacionService notificacionService;
 
-    @Operation(summary = "Listar todas las notificaciones",
-               description = "Recupera la lista completa de notificaciones registradas en el sistema.")
     @ApiResponse(responseCode = "200", description = "Listado de notificaciones obtenido exitosamente")
     @GetMapping
     @Operation(summary = "Obtener todas las notificaciones", description = "Devuelve una lista de todas las notificaciones")

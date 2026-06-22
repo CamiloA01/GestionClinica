@@ -1,9 +1,10 @@
-package com.notificacion.service;
+package com.notificacion.servicio_de_notificaciones.service;
 
 import com.notificacion.model.Notificacion;
 import com.notificacion.model.dto.NotificacionRequestDTO;
 import com.notificacion.model.dto.NotificacionResponseDTO;
 import com.notificacion.repository.notificacionRepository;
+import com.notificacion.service.NotificacionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,10 +21,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Test de servicio: sin BD ni contexto Spring.
- * Verifica la lógica de negocio de NotificacionService con Mockito.
- */
 @ExtendWith(MockitoExtension.class)
 class NotificacionServiceTest {
 
@@ -54,8 +51,6 @@ class NotificacionServiceTest {
         dtoValido.setTipo("CITA");
     }
 
-    // ───── obtenerTodas ──────────────────────────────────────────────────────
-
     @Test
     void obtenerTodas_debeRetornarListaDeNotificaciones() {
         when(notificacionRepository.findAll()).thenReturn(List.of(notificacionMock));
@@ -74,8 +69,6 @@ class NotificacionServiceTest {
 
         assertThat(resultado).isEmpty();
     }
-
-    // ───── obtenerPorId ──────────────────────────────────────────────────────
 
     @Test
     void obtenerPorId_debeRetornarNotificacionCuandoExiste() {
@@ -97,8 +90,6 @@ class NotificacionServiceTest {
                 .hasMessageContaining("Notificación no encontrada");
     }
 
-    // ───── obtenerPorUsuarioId ───────────────────────────────────────────────
-
     @Test
     void obtenerPorUsuarioId_debeRetornarNotificacionesDelUsuario() {
         when(notificacionRepository.findByIdUsuario(1L)).thenReturn(List.of(notificacionMock));
@@ -108,8 +99,6 @@ class NotificacionServiceTest {
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getIdUsuario()).isEqualTo(1L);
     }
-
-    // ───── guardar ───────────────────────────────────────────────────────────
 
     @Test
     void guardar_debeAsignarEstadoENVIADAYFechaEnvioAutomaticamente() {
@@ -132,8 +121,6 @@ class NotificacionServiceTest {
         assertThat(resultado.getMensaje()).isEqualTo("Su cita ha sido confirmada");
     }
 
-    // ───── eliminar ──────────────────────────────────────────────────────────
-
     @Test
     void eliminar_debeEliminarCuandoNotificacionExiste() {
         when(notificacionRepository.existsById(1L)).thenReturn(true);
@@ -153,8 +140,6 @@ class NotificacionServiceTest {
 
         verify(notificacionRepository, never()).deleteById(any());
     }
-
-    // ───── marcarComoLeida ───────────────────────────────────────────────────
 
     @Test
     void marcarComoLeida_debeActualizarEstadoALEIDA() {

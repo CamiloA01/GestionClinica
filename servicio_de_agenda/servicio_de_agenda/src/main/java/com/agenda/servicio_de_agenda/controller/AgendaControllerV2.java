@@ -44,8 +44,6 @@ public class AgendaControllerV2 {
 
 
     // LISTAR TODAS LAS AGENDAS
-    @Operation(summary = "Listar todas las agendas",
-               description = "Recupera la lista completa de agendas médicas registradas en el sistema.")
     @ApiResponse(responseCode = "200", description = "Listado de agendas obtenido exitosamente")
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
     @Operation(summary = "Listar todas las agendas", description = "Devuelve una lista de todas las agendas disponibles")
@@ -65,8 +63,6 @@ public class AgendaControllerV2 {
 
 
     // CREAR AGENDA
-    @Operation(summary = "Crear nueva agenda",
-               description = "Registra una nueva agenda médica validando los datos del cuerpo de la petición.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Agenda creada exitosamente"),
         @ApiResponse(responseCode = "400", description = "Datos inválidos o incompletos en la solicitud")
@@ -104,8 +100,6 @@ public class AgendaControllerV2 {
 
 
     // ELIMINAR
-    @Operation(summary = "Eliminar agenda",
-               description = "Elimina permanentemente una agenda médica del sistema usando su ID.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Agenda eliminada exitosamente (sin contenido)"),
         @ApiResponse(responseCode = "404", description = "No existe una agenda con ese ID")
