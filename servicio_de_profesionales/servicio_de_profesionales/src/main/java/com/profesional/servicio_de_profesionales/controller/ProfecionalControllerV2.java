@@ -1,87 +1,103 @@
 package com.profesional.servicio_de_profesionales.controller;
 
-import com.profesional.servicio_de_profesionales.dto.*;
-import com.profesional.servicio_de_profesionales.service.ProfesionalService;
 import com.profesional.servicio_de_profesionales.assemblers.ProfesionalModelAssemblers;
-
+import com.profesional.servicio_de_profesionales.dto.ProfesionalRequestDTO;
+import com.profesional.servicio_de_profesionales.dto.ProfesionalResponseDTO;
+import com.profesional.servicio_de_profesionales.model.Profesional;
+import com.profesional.servicio_de_profesionales.service.ProfesionalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.MediaTypes;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @RestController
 @RequestMapping("/api/v2/profesional")
-@RequiredArgsConstructor // Reemplaza @Autowired en los campos por inyección mediante constructor implícito de Lombok
-@Slf4j
+@Tag(name = "Profesionales V2 (HATEOAS)", description = "API con soporte HATEOAS para gestión de profesionales")
 public class ProfecionalControllerV2 {
 
-    private final ProfesionalService profesionalService;
-    private final ProfesionalModelAssemblers assemblers;
+    @Autowired
+    private ProfesionalService profesionalService;
 
+    @Autowired
+    private ProfesionalModelAssemblers assembler;
+
+    @Operation(summary = "Obtener todos los profesionales con HATEOAS")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
+    })
     @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    @Operation(summary = "Obtener todos los profesionales", description = "Retorna una lista de todos los profesionales")
-    public CollectionModel<EntityModel<ProfesionalResponseDTO>> obtenerTodos() {
-        // 1. Convertimos la lista del servicio en modelos HATEOAS usando el assembler
-        List<EntityModel<ProfesionalResponseDTO>> profesionalesModel = profesionalService.obtenerTodos().stream()
-                .map(assemblers::toModel) // Tu assembler debe recibir ProfesionalResponseDTO
+    public CollectionModel<EntityModel<Profesional>> obtenerTodos() {
+        List<EntityModel<Profesional>> profesionales = profesionalService.obtenerTodosEntidad().stream()
+                .map(assembler::toModel)
                 .collect(Collectors.toList());
-        
-        // 2. Retornamos el CollectionModel con su respectivo Self Link corregido
-        return CollectionModel.of(profesionalesModel,
-                linkTo(methodOn(ProfecionalControllerV2.class).obtenerTodos()).withSelfRel());
+
+        Link selfLink = Link.of("/api/v2/profesional").withSelfRel();
+        return CollectionModel.of(profesionales, selfLink);
     }
 
+    @Operation(summary = "Obtener profesional por ID con HATEOAS")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Profesional encontrado"),
+        @ApiResponse(responseCode = "404", description = "No encontrado", content = @Content)
+    })
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    @Operation(summary = "Obtener profesional por ID", description = "Retorna la información de un profesional específico por su ID")
-    public EntityModel<ProfesionalResponseDTO> obtenerPorId(@PathVariable Long id) {
-        return profesionalService.obtenerPorId(id)
-                .map(assemblers::toModel) // Enriquecemos con HATEOAS
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profesional no encontrado"));
+    public EntityModel<Profesional> obtenerPorId(
+            @Parameter(description = "ID del profesional", example = "1")
+            @PathVariable Long id) {
+        Profesional profesional = profesionalService.obtenerEntidadPorId(id);
+        return assembler.toModel(profesional);
     }
 
-    @PostMapping(produces = MediaTypes.HAL_JSON_VALUE)
-    @Operation(summary = "Crear un nuevo profesional", description = "Crea un nuevo profesional y lo retorna")
-    public ResponseEntity<EntityModel<ProfesionalResponseDTO>> crear(@Valid @RequestBody ProfesionalRequestDTO dto) {
-        log.info("✅ Comunicación exitosa: petición recibida desde el microservicio de usuario para crear al profesional '{}' (usuarioId={})",
-                dto.getNombre(), dto.getUsuarioId());
-
-        ProfesionalResponseDTO nuevoProfesional = profesionalService.guardar(dto);
-
-        log.info("✅ Profesional creado correctamente con id={}", nuevoProfesional.getId());
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(assemblers.toModel(nuevoProfesional)); // Respuesta de creación con HATEOAS
+    @Operation(summary = "Crear profesional")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Creado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content)
+    })
+    @PostMapping
+    public ResponseEntity<ProfesionalResponseDTO> crear(
+            @Valid @RequestBody ProfesionalRequestDTO dto) {
+        return ResponseEntity.status(201).body(profesionalService.guardar(dto));
     }
 
-    @PutMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    @Operation(summary = "Actualizar un profesional existente", description = "Actualiza la información de un profesional existente por su ID")
-    public ResponseEntity<EntityModel<ProfesionalResponseDTO>> actualizar(
+    @Operation(summary = "Actualizar profesional")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Actualizado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "No encontrado", content = @Content)
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfesionalResponseDTO> actualizar(
+            @Parameter(description = "ID del profesional", example = "1")
             @PathVariable Long id,
             @Valid @RequestBody ProfesionalRequestDTO dto) {
-            
         return profesionalService.actualizar(id, dto)
-                .map(assemblers::toModel) // Transforma a EntityModel si existe
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Eliminar profesional")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "No encontrado", content = @Content)
+    })
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar un profesional", description = "Elimina un profesional existente por su ID")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(
+            @Parameter(description = "ID del profesional", example = "1")
+            @PathVariable Long id) {
         if (profesionalService.obtenerPorId(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
