@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
@@ -28,6 +30,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @RestController
 @RequestMapping("/api/usuarios")    
 @RequiredArgsConstructor
+@Tag(name = "Usuarios", description = "Operaciones relacionadas con los usuarios")
 public class usuarioController {
 
     
@@ -38,6 +41,7 @@ public class usuarioController {
     private final ProfesionalClient profesionalClient;
 
     @GetMapping
+    @Operation(summary = "Obtener todos los usuarios", description = "Retorna una lista de todos los usuarios registrados")
     public CollectionModel<EntityModel<UsuarioResponseDTO>> getAllUsuarios() {
         // 1. Obtenemos la lista de DTOs directamente del servicio
         List<UsuarioResponseDTO> dtos = usuarioService.getAllUsuarios();
@@ -53,6 +57,8 @@ public class usuarioController {
     }
 
     @GetMapping("/{id}") // 1. Corregida la ruta para recibir el ID
+    @Operation(summary = "Obtener usuario por ID", description = "Retorna la información de un usuario específico por su ID")
+
     public EntityModel<UsuarioResponseDTO> getUsuarioById(@PathVariable Long id) {
     // 2. Se maneja el Optional con orElseThrow y se agrega el punto y coma faltante
         UsuarioResponseDTO dto = usuarioService.getUsuarioById(id)
@@ -70,6 +76,7 @@ public class usuarioController {
 
     
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un usuario por su ID")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(@PathVariable Long id, @Valid @RequestBody UsuarioRequestDTO requestDTO) {
         return usuarioService.actualizarUsuario(id, requestDTO)
             .map(ResponseEntity::ok)
@@ -77,6 +84,7 @@ public class usuarioController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar usuario", description = "Elimina un usuario por su ID")
     public ResponseEntity<RepresentationModel<?>> eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
         
@@ -87,12 +95,14 @@ public class usuarioController {
     }    
 
     @GetMapping("/buscar")
+    @Operation(summary = "Buscar usuario por ID", description = "Retorna la información de un usuario específico por su ID")
     // CORREGIDO: Cambiado de @PathVariable a @RequestParam para URLs tipo: /buscar?id=1
     public ResponseEntity<List<UsuarioResponseDTO>> buscarPorId(@RequestParam Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
     @PostMapping("/crear-profesional")
+    @Operation(summary = "Crear profesional", description = "Crea un nuevo profesional y envía una alerta al servicio de pacientes")
     public ResponseEntity<String> enviar(@RequestBody ProfesionalRequest request){
     profesionalClient.enviarAlerta(request);
         return ResponseEntity.ok("Enviado correctamente");

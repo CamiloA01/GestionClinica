@@ -9,6 +9,9 @@ import com.pago.servicio_de_pagos.model.Pago;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 
+import io.swagger.v3.oas.annotations.Operation; 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -23,12 +26,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @RestController
 @RequestMapping("/api/pagos")
 @RequiredArgsConstructor
+@Tag(name = "Pago Controller", description = "Operaciones relacionadas con pagos")
 public class pagoController { 
 
     private final pagoService pagoService;
     private final PagoModelAssembler assembler; 
 
     @GetMapping
+    @Operation(summary = "Obtener todos los pagos", description = "Devuelve una lista de todos los pagos disponibles")
     public ResponseEntity<CollectionModel<EntityModel<PagoResponceDTO>>> obtenerPagos() {
         // Obtenemos las entidades desde el servicio
         List<Pago> pagos = pagoService.obtenerPagos();
@@ -48,6 +53,7 @@ public class pagoController {
 
     // Renombrado para que coincida con el linkTo de tu Assembler
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener un pago por ID", description = "Devuelve un pago específico basado en su ID")
     public ResponseEntity<EntityModel<PagoResponceDTO>> obtenerPagoPorId(@PathVariable Long id) {
         return pagoService.obtenerPagoPorId(id)
                 .map(this::convertToResponceDTO)
@@ -58,6 +64,7 @@ public class pagoController {
 
     // REEMPLAZADO: POST para crear pagos con HATEOAS
     @PostMapping
+    @Operation(summary = "Crear un nuevo pago", description = "Crea un nuevo pago y devuelve la información del pago creado con enlaces HATEOAS")
     public ResponseEntity<EntityModel<PagoResponceDTO>> crearPago(@Valid @RequestBody PagoRequestDTO dto) {
         
         // 1. Convertimos el RequestDTO a Entity para el servicio
@@ -83,6 +90,7 @@ public class pagoController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un pago existente", description = "Actualiza la información de un pago existente por su ID")
     public ResponseEntity<Pago> actualizarPago(
             @PathVariable Long id,
             @Valid @RequestBody Pago pagoActualizado) {
@@ -95,6 +103,7 @@ public class pagoController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un pago", description = "Elimina un pago existente por su ID")
     public ResponseEntity<Void> eliminarPago(@PathVariable Long id){
         if (pagoService.obtenerPagoPorId(id).isEmpty()){
             return ResponseEntity.notFound().build();
@@ -104,6 +113,7 @@ public class pagoController {
     }
 
     @GetMapping("/buscar")
+    @Operation(summary = "Buscar pagos por estado", description = "Devuelve una lista de pagos filtrados por su estado")
     public ResponseEntity<List<Pago>> buscarPorEstado(@RequestParam String estado) {
         List<Pago> pagos = pagoService.obtenerPagosPorEstado(estado);
         

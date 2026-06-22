@@ -8,6 +8,9 @@ import com.reserva.servicio_de_reserva.service.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +27,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/reserva")
 @RequiredArgsConstructor
+@Tag(name = "Reservas", description = "Operaciones relacionadas con las reservas")
 public class ReservaController {
 
     private final ReservaService reservaService;
     private final ClinicaModelAssembler assembler;
 
     @GetMapping
+    @Operation(summary = "Obtener todas las reservas", description = "Retorna una lista de todas las reservas")
     public CollectionModel<EntityModel<ReservaResponseDTO>> getAllReservas() {
         // 1. Obtenemos la lista de DTOs directamente del servicio
         List<ReservaResponseDTO> dtos = reservaService.getAllReservas();
@@ -46,6 +51,7 @@ public class ReservaController {
 
     // NUEVO: Método GET por ID para complementar el Assembler HATEOAS
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener reserva por ID", description = "Retorna la información de una reserva específica por su ID")
     public EntityModel<ReservaResponseDTO> getReservaById(@PathVariable Long id) {
         ReservaResponseDTO dto = reservaService.obtenerPorId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada"));
@@ -53,6 +59,7 @@ public class ReservaController {
     }
 
     @PostMapping
+    @Operation(summary = "Crear una nueva reserva", description = "Crea una nueva reserva y retorna la información de la reserva creada")
     public ResponseEntity<EntityModel<ReservaResponseDTO>> crearReserva(@Valid @RequestBody ReservaRequestDTO reservaRequestDTO) {
     // 1. Guardamos la reserva en la base de datos
     ReservaResponseDTO reservaResponseDTO = reservaService.guardar(reservaRequestDTO);
@@ -64,6 +71,7 @@ public class ReservaController {
     }
     
    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar una reserva existente", description = "Actualiza la información de una reserva existente por su ID")
     public ResponseEntity<EntityModel<ReservaResponseDTO>> actualizarReserva(@PathVariable Long id, @Valid @RequestBody ReservaRequestDTO reservaRequestDTO) {
     
     return reservaService.actualizar(id, reservaRequestDTO)
@@ -73,6 +81,7 @@ public class ReservaController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar una reserva", description = "Elimina una reserva existente por su ID")
     public ResponseEntity<Void> eliminarReserva(@PathVariable Long id) {
         if (reservaService.obtenerPorId(id).isEmpty()) {
             return ResponseEntity.notFound().build();
