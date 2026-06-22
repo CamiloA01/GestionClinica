@@ -93,7 +93,7 @@ const verificarToken = (req, res, next) => {
 
 app.use('/api', verificarToken);
 
-// --- 5. REGISTRO DINAMICO DE RUTAS Y PROXYS ---
+// --- 5. REGISTRO DE RUTAS Y PROXYS ---
 const proxyOptions = (puerto) => ({
     target: `http://localhost:${puerto}`,
     changeOrigin: true,
@@ -108,18 +108,17 @@ const proxyOptions = (puerto) => ({
     }
 });
 
-
-// Enrutamiento a cada microservicio (Asumiendo que corren en localhost con distintos puertos)
-app.use('/api/usuarios', createProxyMiddleware(proxyOptions('http://localhost:8081')));
-app.use('/api/pacientes', createProxyMiddleware(proxyOptions('http://localhost:8086')));
-app.use('/api/profesionales', createProxyMiddleware(proxyOptions('http://localhost:8084')));
-app.use('/api/especialidades', createProxyMiddleware(proxyOptions('http://localhost:8089')));
-app.use('/api/agendas', createProxyMiddleware(proxyOptions('http://localhost:8090')));
-app.use('/api/reservas', createProxyMiddleware(proxyOptions('http://localhost:8082')));
-app.use('/api/pagos', createProxyMiddleware(proxyOptions('http://localhost:8085')));
-app.use('/api/notificaciones', createProxyMiddleware(proxyOptions('http://localhost:8087')));
-app.use('/api/sucursales', createProxyMiddleware(proxyOptions('http://localhost:8088')));
-app.use('/api/reportes', createProxyMiddleware(proxyOptions('http://localhost:8083')));
+// Enrutamiento a cada microservicio
+app.use('/api/usuarios',        createProxyMiddleware(proxyOptions(8081)));
+app.use('/api/reservas',        createProxyMiddleware(proxyOptions(8082)));
+app.use('/api/reportes',        createProxyMiddleware(proxyOptions(8083)));
+app.use('/api/profesionales',   createProxyMiddleware(proxyOptions(8084)));
+app.use('/api/pagos',           createProxyMiddleware(proxyOptions(8085)));
+app.use('/api/agendas',         createProxyMiddleware(proxyOptions(8086))); // FIX: era 8090
+app.use('/api/notificaciones',  createProxyMiddleware(proxyOptions(8087)));
+app.use('/api/ficha-clinica',   createProxyMiddleware(proxyOptions(8088))); // FIX: era /api/sucursales
+app.use('/api/especialidades',  createProxyMiddleware(proxyOptions(8089)));
+app.use('/api/pacientes',       createProxyMiddleware(proxyOptions(8090))); // FIX: era 8086
 
 // --- 6. RUTA DE HEALTH CHECK DEL GATEWAY ---
 app.get('/health', (req, res) => {
