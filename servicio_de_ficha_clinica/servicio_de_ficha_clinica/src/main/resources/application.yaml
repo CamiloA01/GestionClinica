@@ -6,19 +6,19 @@ spring:
     name: servicio_de_ficha_clinica
     
   datasource:
-    driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@udpftr6a6yrxy6ye_high?TNS_ADMIN=C:/Wallet_FichaClinica
+    url: jdbc:oracle:thin:@udpftr6a6yrxy6ye_high?TNS_ADMIN=/app/wallet
     username: ADMIN
     password: FullStack-001
-    
+    driver-class-name: oracle.jdbc.OracleDriver
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    database-platform: org.hibernate.dialect.OracleDialect
     properties:
       hibernate:
         dialect: org.hibernate.dialect.OracleDialect
-
 logging:
   level:
     org:

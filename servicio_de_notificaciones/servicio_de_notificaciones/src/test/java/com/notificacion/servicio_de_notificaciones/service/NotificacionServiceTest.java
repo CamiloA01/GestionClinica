@@ -97,7 +97,7 @@ class NotificacionServiceTest {
         List<NotificacionResponseDTO> resultado = notificacionService.obtenerPorUsuarioId(1L);
 
         assertThat(resultado).hasSize(1);
-        assertThat(resultado.get(0).getIdUsuario()).isEqualTo(1L);
+        assertThat(resultado.get(0).getUsuarioId()).isEqualTo(1L);
     }
 
     @Test

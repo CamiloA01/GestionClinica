@@ -6,7 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY . .
+COPY --from=build /app/target/*.jar app.jar
+COPY Wallet /app/wallet
 
 EXPOSE 3000
 

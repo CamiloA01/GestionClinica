@@ -27,6 +27,7 @@ services:
       - clinica-net
 
   servicio_usuario:
+    image: servicio_usuario
     build:
       context: ./servicio_de_usuario/servicio_de_usuario
       dockerfile: Dockerfile
@@ -36,7 +37,7 @@ services:
     environment:
       - TNS_ADMIN=/wallet
     volumes:
-      - ./wallets/wallet_usuario:/wallet
+      - ./wallet:/wallet
     networks:
       - clinica-net
 
